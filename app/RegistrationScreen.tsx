@@ -1,38 +1,70 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert,Button } from 'react-native';
 import { styles } from './styles/styles';
+import axios from 'axios'
 
-const RegistrationScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+const RegistrationScreen = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [error, setError] = useState('');
 
-  const handleRegister = () => {
-    if (name && age) {
-      navigation.navigate('Main', { name });
-    } else {
-      Alert.alert('Error', 'Please fill in all fields');
+  const handleRegister = async () => {
+    try {
+        const response = await axios.post('https://08ac-78-154-129-218.ngrok-free.app/api/auth/register', {
+            email,
+            password,
+            first_name: firstName,
+            last_name: lastName,
+            client_type: 'patient', 
+        });
+        console.log('Registration successful:', response.data);
+        navigation.navigate('PatientDashboard');
+    } catch (err: any) {
+        setError(err.response?.data?.message || 'Registration failed');
     }
-  };
+};
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Welcome to IoMT App</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your name"
-        value={name}
-        onChangeText={setName}
+      <Text style={styles.title}>Register</Text>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+            <TextInput
+                style={styles.input}
+                placeholder="First Name"
+                value={firstName}
+                onChangeText={setFirstName}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Last Name"
+                value={lastName}
+                onChangeText={setLastName}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your age"
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+      <View style={{gap:10}}>
+            <Button title="Register" onPress={handleRegister} />
+            <Button
+
+                title="Already registered"
+                onPress={() => navigation.navigate('Login')}
+            />
+      </View>
+
     </View>
   );
 };
