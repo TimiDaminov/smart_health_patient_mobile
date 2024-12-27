@@ -3,33 +3,61 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { HelloWave } from '@/components/HelloWave';
 import { ExternalLink } from '@/components/ExternalLink';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { jwtDecode } from "jwt-decode";
 const LoginScreen = ({ navigation }: { navigation: any }) => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const handleLogin = async () => {
-        try {
-            const response = await axios.post('https://08ac-78-154-129-218.ngrok-free.app/api/auth/login', { email, password });
-            const { token, userId, role,first_name } = response.data;
+      try {
+        console.log("Attempting login with", { email, password });
 
-            console.log('Login successful:', { token, userId, role,first_name });
+        const response = await axios.post('https://08ac-78-154-129-218.ngrok-free.app/api/auth/login', {
+          email,
+          password,
+        });
+    
 
-            // Сохранить токен для последующих запросов
-            // Вы можете использовать AsyncStorage или SecureStore
-            // await AsyncStorage.setItem('token', token);
+        console.log('Login response:', response.data);
+    
+        const { token, userId, role, first_name } = response.data;
 
-            if (role === 'doctor') {
-                navigation.navigate('DoctorDashboard'); 
-            } else {
-                navigation.navigate('PatientDashboard',[first_name]); 
+        console.log('Login successful:', { token, userId, role, first_name });
+    
+
+        await AsyncStorage.setItem('auth_token', token);
+        console.log('Token saved in AsyncStorage');
+
+        if (role === 'doctor') {
+
+          console.log('Navigating to DoctorDashboard');
+          console.log('Stored token:', token);
+          navigation.navigate('DoctorDashboard');
+        } else {
+
+          const decodedToken = jwtDecode(token);
+          console.log('Decoded token:', decodedToken);
+          const currentTime = Math.floor(Date.now() / 1000); // Время в секундах
+            if (decodedToken.exp < currentTime) {
+                console.log('Token expired');
             }
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed');
+          console.log('Navigating to PatientDashboard');
+          console.log('Stored token:', token);
+          navigation.navigate('PatientDashboard', { first_name });
         }
-    };
+      } catch (err: any) {
 
+        console.error('Login error:', err);
+    
+        // Выводим ошибку на экран
+        setError(err.response?.data?.message || 'Login failed');
+      }
+    };
+  
     return (
       <View style={styles.container}>
             <Text style={styles.title}>Login</Text>
