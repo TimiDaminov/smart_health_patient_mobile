@@ -25,7 +25,7 @@ const ManualDataEntryScreen = ({navigator}) => {
       };
     
       try {
-        const response = await fetch('https://08ac-78-154-129-218.ngrok-free.app/api/submit-data', {
+        const response = await fetch('https://330d-78-154-129-218.ngrok-free.app/api/submit-data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

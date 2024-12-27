@@ -16,7 +16,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
       try {
         console.log("Attempting login with", { email, password });
 
-        const response = await axios.post('https://08ac-78-154-129-218.ngrok-free.app/api/auth/login', {
+        const response = await axios.post('https://330d-78-154-129-218.ngrok-free.app/api/auth/login', {
           email,
           password,
         });
@@ -52,8 +52,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
       } catch (err: any) {
 
         console.error('Login error:', err);
-    
-        // Выводим ошибку на экран
+
         setError(err.response?.data?.message || 'Login failed');
       }
     };

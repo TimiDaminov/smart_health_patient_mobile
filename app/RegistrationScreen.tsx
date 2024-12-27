@@ -12,7 +12,7 @@ const RegistrationScreen = ({navigation}) => {
 
   const handleRegister = async () => {
     try {
-        const response = await axios.post('https://08ac-78-154-129-218.ngrok-free.app/api/auth/register', {
+        const response = await axios.post('https://330d-78-154-129-218.ngrok-free.app/api/auth/register', {
             email,
             password,
             first_name: firstName,
