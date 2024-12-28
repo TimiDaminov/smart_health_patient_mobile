@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LineChart } from 'react-native-chart-kit'; // Импортируем график
 
-const PatientDashboard = ({ route }) => {
+const PatientDashboard = ({ route, navigation }) => {
     const { first_name } = route.params;
-    const [healthData, setHealthData] = useState(null);
+    const [healthData, setHealthData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchHealthData = async () => {
-            const token = await AsyncStorage.getItem('auth_token');  // Получаем токен из AsyncStorage
-            console.log('Token:', token);  // Выводим токен в консоль для отладки
+            const token = await AsyncStorage.getItem('auth_token');
+            console.log(token)
             if (!token) {
                 setError('No token found');
                 setLoading(false);
@@ -24,11 +25,10 @@ const PatientDashboard = ({ route }) => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                console.log('Fetched health data:', response.data);  // Выводим данные из ответа
-                setHealthData(response.data); // Обновляем состояние с данными
+                setHealthData(response.data);
+                console.log("HEALTH DATA:",healthData)
             } catch (error) {
                 setError('Failed to fetch health data');
-                console.error('Error fetching health data:', error);
             } finally {
                 setLoading(false);
             }
@@ -36,6 +36,11 @@ const PatientDashboard = ({ route }) => {
 
         fetchHealthData();
     }, []);
+
+    // Данные для графика (по текущему месяцу)
+    // const graphData = healthData.filter(data => new Date(data.date).getMonth() === new Date().getMonth());
+    // const pulseData = graphData.map(item => item.pulse);
+    // const systolicData = graphData.map(item => item.systolic);
 
     if (loading) {
         return (
@@ -56,25 +61,51 @@ const PatientDashboard = ({ route }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+
+            {/* <View style={styles.chartContainer}>
+                <Text style={styles.title}>Pulse Over Time</Text>
+                <LineChart
+                    data={{
+                        labels: graphData.map((_, index) => `Day ${index + 1}`),
+                        datasets: [
+                            {
+                                data: pulseData,
+                                strokeWidth: 2,
+                                color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+                            },
+                        ],
+                    }}
+                    width={350} // ширина графика
+                    height={220} // высота графика
+                    chartConfig={{
+                        backgroundColor: '#fff',
+                        backgroundGradientFrom: '#fff',
+                        backgroundGradientTo: '#fff',
+                        decimalPlaces: 0,
+                        color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                        style: { borderRadius: 16 },
+                        propsForDots: { r: '6', strokeWidth: '2', stroke: '#fff' },
+                    }}
+                    bezier
+                />
+            </View> */}
+
             <Text style={styles.welcomeText}>Welcome, {first_name}!</Text>
             <View style={styles.healthDataContainer}>
-                <Text style={styles.title}>Health Metrics</Text>
-                {healthData && healthData.length > 0 ? (
-                    healthData.map((data, index) => (
-                        <View key={data.id} style={styles.metricRow}>
-                            <Text style={styles.timestamp}>{new Date(data.timestamp).toLocaleString()}</Text>
-                            <Text style={styles.metricLabel}>Pulse:</Text>
-                            <Text style={styles.metricValue}>{data.pulse} bpm</Text>
-                            <Text style={styles.metricLabel}>SpO2:</Text>
-                            <Text style={styles.metricValue}>{data.spo2} %</Text>
-                            <Text style={styles.metricLabel}>Blood Pressure:</Text>
-                            <Text style={styles.metricValue}>{data.systolic}/{data.diastolic} mmHg</Text>
-                        </View>
-                    ))
-                ) : (
-                    <Text style={styles.noDataText}>No health data available</Text>
-                )}
+                <Text style={styles.title}>Latest Health Metrics</Text>
+                {healthData.map((data) => (
+                    <View key={data.id} style={styles.metricRow}>
+                        <Text style={styles.timestamp}>{new Date(data.date).toLocaleString()}</Text>
+                        <Text style={styles.metricLabel}>Pulse: <Text style={styles.metricValue}>{data.pulse} bpm</Text></Text>
+                        <Text style={styles.metricLabel}>Blood Pressure: <Text style={styles.metricValue}>{data.systolic}/{data.diastolic} mmHg</Text></Text>
+                        <Text style={styles.metricLabel}>Oxygen Level: <Text style={styles.metricValue}>{data.spo2}%</Text></Text>
+                    </View>
+                ))}
             </View>
+            <TouchableOpacity onPress={() => navigation.navigate('FullData', { healthData })}>
+                <Text style={styles.viewMore}>View All Data</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 };
@@ -95,11 +126,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 10,
         padding: 15,
+        marginBottom: 20,
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
-        marginBottom: 20,
     },
     title: {
         fontSize: 18,
@@ -127,12 +158,17 @@ const styles = StyleSheet.create({
     metricValue: {
         fontSize: 16,
         color: '#007BFF',
-        marginTop: 5,
     },
-    noDataText: {
+    chartContainer: {
+        marginBottom: 20,
+        alignItems: 'center',
+    },
+    viewMore: {
+        color: '#007BFF',
         fontSize: 16,
-        color: '#6c757d',
         textAlign: 'center',
+        marginTop: 20,
+        fontWeight: '600',
     },
     loadingContainer: {
         flex: 1,

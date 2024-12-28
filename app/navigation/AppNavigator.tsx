@@ -8,6 +8,7 @@ import ManualDataEntryScreen from '../ManualDataEntryScreen';
 import GoogleFitScreen from '../GoogleFitScreen';
 import Login from '../Login';
 import PatientDashboard from '../PatientDashboard';
+import DoctorDashboard from '../DoctorDashboard';
 import { NavigationContainer } from '@react-navigation/native';
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +22,8 @@ const AppNavigator = () => {
         <Stack.Screen name="ManualEntry" component={ManualDataEntryScreen} />
         <Stack.Screen name="GoogleFit" component={GoogleFitScreen} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="PatientDashboard" component={PatientDashboard} />
+      <Stack.Screen name="PatientDashboard" component={PatientDashboard} />
+      <Stack.Screen name="DoctorDashboard" component={DoctorDashboard} />
     </Stack.Navigator>
   );
 };

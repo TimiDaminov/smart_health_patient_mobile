@@ -26,13 +26,12 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
     
         const { token, userId, role, first_name } = response.data;
 
-        console.log('Login successful:', { token, userId, role, first_name });
     
 
         await AsyncStorage.setItem('auth_token', token);
         console.log('Token saved in AsyncStorage');
 
-        if (role === 'doctor') {
+        if (role === 2) {
 
           console.log('Navigating to DoctorDashboard');
           console.log('Stored token:', token);
