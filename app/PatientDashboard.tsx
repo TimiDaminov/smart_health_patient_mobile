@@ -110,8 +110,11 @@ const PatientDashboard = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate('ManualDataEntryScreen')}>
                 <Text style={styles.viewMore}>Add data manually</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('FitbitAuthScreen')}>
+            <TouchableOpacity onPress={() => navigation.navigate('FitbitAuthButton')}>
                 <Text style={styles.viewMore}>Add FitBit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('FitbitProfile')}>
+                <Text style={styles.viewMore}>FitBit Profile</Text>
             </TouchableOpacity>
         </ScrollView>
     );

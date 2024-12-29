@@ -11,7 +11,8 @@ import PatientDashboard from '../PatientDashboard';
 import DoctorDashboard from '../DoctorDashboard';
 import { NavigationContainer } from '@react-navigation/native';
 import fitbitIntegration from '../fitbitIntegration';
-import FitbitAuthScreen from '../FitbitAuthScreen';
+import FitbitAuthButton from '../FitbitAuthButton';
+import FitBitProfile from '../FitBitProfile';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
@@ -27,7 +28,8 @@ const AppNavigator = () => {
         <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="PatientDashboard" component={PatientDashboard} />
       <Stack.Screen name="DoctorDashboard" component={DoctorDashboard} />
-      <Stack.Screen name="FitbitAuthScreen" component={FitbitAuthScreen} />
+      <Stack.Screen name="FitbitAuthButton" component={FitbitAuthButton} />
+      <Stack.Screen name="FitBitProfile" component={FitBitProfile} />
       </Stack.Navigator>
 
   );
