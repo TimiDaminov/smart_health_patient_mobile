@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
-import { HelloWave } from '@/components/HelloWave';
-import { ExternalLink } from '@/components/ExternalLink';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { jwtDecode } from "jwt-decode";

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LineChart } from 'react-native-chart-kit'; // Импортируем график
+import { LineChart } from 'react-native-chart-kit'; 
 
 const PatientDashboard = ({ route, navigation }) => {
     const { first_name } = route.params;
     const [healthData, setHealthData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
 
     useEffect(() => {
         const fetchHealthData = async () => {
@@ -105,6 +106,12 @@ const PatientDashboard = ({ route, navigation }) => {
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('FullData', { healthData })}>
                 <Text style={styles.viewMore}>View All Data</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('ManualDataEntryScreen')}>
+                <Text style={styles.viewMore}>Add data manually</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('FitbitAuthScreen')}>
+                <Text style={styles.viewMore}>Add FitBit</Text>
             </TouchableOpacity>
         </ScrollView>
     );
